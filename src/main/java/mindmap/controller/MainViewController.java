@@ -1,8 +1,6 @@
-package sample;
+package mindmap.controller;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -19,8 +17,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import sample.model.BubbleAreaBean;
-import sample.utils.jackson.BubbleAreaBeanDeserializer;
+import mindmap.utils.OutlineGenerator;
+import mindmap.model.BubbleAreaBean;
+import mindmap.utils.jackson.BubbleAreaBeanDeserializer;
+import mindmap.view.Bubble;
+import mindmap.view.BubbleArea;
 
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
@@ -31,14 +32,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// TODO: Сохранение разработанной модели в файл и загрузка ее в редакторе
-// TODO: save connections
-
 // TODO: удаление bubble
 // TODO: удаление связей
 
-
-public class Controller {
+public class MainViewController {
 
     @FXML
     public ColorPicker colorPicker;
@@ -69,7 +66,7 @@ public class Controller {
 
     private TreeItem TreeRoot;
 
-    Bubble selectedBubble;
+    public Bubble selectedBubble;
 
     private BubbleArea bubbleArea;
 
@@ -126,16 +123,17 @@ public class Controller {
 
         saveAsJson.setOnAction(e -> {
             saveFile();
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            try {
-//                new ObjectMapper().writeValue(new File("E:\\Mindmap.json"), bubbleAreaBean);
-//                System.out.println(bubbleAreaBean.toString());
-//                System.out.println(objectMapper.writeValueAsString(bubbleAreaBean));
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//            }
         });
 
+        anchorToggleButton.setOnAction(e -> {
+            ToggleButton toggleButton = (ToggleButton) e.getSource();
+            boolean isSelected = toggleButton.isSelected();
+            for (Node bubbleAreaNode : bubbleArea.getChildren()) {
+                if (bubbleAreaNode instanceof Bubble) {
+                    ((Bubble) bubbleAreaNode).setAnchorsVisible(isSelected);
+                }
+            }
+        });
         colorPicker.setOnAction(e -> {
             if (selectedBubble != null){
                 selectedBubble.Cover.setFill(colorPicker.getValue());
@@ -151,13 +149,7 @@ public class Controller {
                 selectedBubble.text.setFont(Font.font(selectedBubble.text.getFont().getName(), Double.parseDouble(newVal)));
             }
         });
-        anchorToggleButton.setOnAction(event -> {
-            for (Node bubbleAreaNode : bubbleArea.getChildren()) {
-                if (bubbleAreaNode instanceof Bubble) {
-                    ((Bubble) bubbleAreaNode).changeVisible();
-                }
-            }
-        });
+
 
         contextMenu = new ContextMenu();
         contextMenu.autoHideProperty().setValue(true);
@@ -189,25 +181,25 @@ public class Controller {
         bubbleArea.bubbleObservableList.addListener((ListChangeListener<Bubble>) change -> GenerateTree(bubbleArea.bubbleArrayList));
 
         // TODO
-        bubbleAreaWrapper.setOnKeyPressed(e -> {
-            System.out.println(e.toString());
-            try {
-                if (e.getCode() == KeyCode.DELETE) {
-                    System.out.println("Removing selected bubble");
-                    for (int i = 0; i < bubbleArea.bubbleArrayList.size(); i++) {
-                        Bubble bubble = bubbleArea.bubbleArrayList.get(i);
-                        if (bubble.isSelected) {
-                            System.out.println("Removing selected bubble");
-                            bubbleArea.RemoveBubble(bubble);
-                        }
-
-                    }
-
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
+//        bubbleAreaWrapper.setOnKeyPressed(e -> {
+//            System.out.println(e.toString());
+//            try {
+//                if (e.getCode() == KeyCode.DELETE) {
+//                    System.out.println("Removing selected bubble");
+//                    for (int i = 0; i < bubbleArea.bubbleArrayList.size(); i++) {
+//                        Bubble bubble = bubbleArea.bubbleArrayList.get(i);
+//                        if (bubble.isSelected) {
+//                            System.out.println("Removing selected bubble");
+//                            bubbleArea.removeBubble(bubble);
+//                        }
+//
+//                    }
+//
+//                }
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        });
     }
 
     public void GenerateTree(final ArrayList<Bubble> Bubbles) {
@@ -215,7 +207,7 @@ public class Controller {
 //            System.out.println("Generating tree");
             OutlineGenerator.Build(Bubbles, Outline);
         } catch (InterruptedException ex) {
-            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

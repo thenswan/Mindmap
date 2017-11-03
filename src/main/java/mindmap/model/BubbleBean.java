@@ -1,4 +1,4 @@
-package sample.model;
+package mindmap.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;

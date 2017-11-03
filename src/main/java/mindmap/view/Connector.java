@@ -1,9 +1,8 @@
-package sample;
+package mindmap.view;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import sample.model.ConnectorBean;
+import mindmap.model.ConnectorBean;
 
 public class Connector extends Group {
 
@@ -17,7 +16,7 @@ public class Connector extends Group {
 
     MyCubicCurve cubicCurveDraggable;
 
-    Connector(Bubble p, Bubble c, Anchor startAnchor, Anchor endAnchor){
+    public Connector(Bubble p, Bubble c, Anchor startAnchor, Anchor endAnchor){
 //        this.Child = c;
 //        this.Parent = p;
 
@@ -67,7 +66,7 @@ public class Connector extends Group {
         this.getChildren().add(cubicCurveDraggable);
     }
 
-    Connector(ConnectorBean connectorBean){
+    public Connector(ConnectorBean connectorBean){
         cubicCurveDraggable = new MyCubicCurve();
 
         cubicCurveDraggable.startXProperty().bind(connectorBean.startXProperty());
@@ -87,7 +86,7 @@ public class Connector extends Group {
         this.getChildren().add(cubicCurveDraggable);
     }
 
-    ConnectorBean getConnectorBean(){
+    public ConnectorBean getConnectorBean(){
         ConnectorBean connectorBean = new ConnectorBean();
         connectorBean.startXProperty().bind(startAnchor.helpCenterXProperty());
         connectorBean.startYProperty().bind(startAnchor.helpCenterYProperty());

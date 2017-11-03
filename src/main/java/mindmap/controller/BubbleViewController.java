@@ -1,18 +1,14 @@
-package sample;
+package mindmap.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,13 +16,13 @@ import java.util.ResourceBundle;
 public class BubbleViewController implements Initializable {
 
     @FXML
-    Rectangle cover;
+    public Rectangle cover;
 
     @FXML
     TextField textField;
 
     @FXML
-    Label Title;
+    public Label Title;
 
     @FXML
     Circle top;
@@ -62,7 +58,7 @@ public class BubbleViewController implements Initializable {
         }
     }
 
-    void toggleSelected(boolean isSelected) {
+    public void toggleSelected(boolean isSelected) {
         if (isSelected) {
 //            this.cover.setEffect(new DropShadow(10, 0, 0, Color.GREEN));
             this.cover.setStroke(Color.GREEN);

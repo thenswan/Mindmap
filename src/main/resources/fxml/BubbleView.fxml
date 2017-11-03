@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<Pane blendMode="SRC_ATOP" cache="false" disable="false" mouseTransparent="false" prefHeight="90.0" prefWidth="180.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.BubbleViewController">
+<Pane blendMode="SRC_ATOP" cache="false" disable="false" mouseTransparent="false" prefHeight="90.0" prefWidth="180.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mindmap.controller.BubbleViewController">
     <children>
         <TextField fx:id="textField" editable="false" focusTraversable="true" layoutX="0.0" layoutY="30.0" onKeyReleased="#Typed" prefHeight="30.0" prefWidth="180.0" visible="false" />
         <Label fx:id="Title" alignment="CENTER" cache="false" contentDisplay="CENTER" layoutX="19.0" layoutY="30.0" prefHeight="30.0" prefWidth="141.0" text="Text">

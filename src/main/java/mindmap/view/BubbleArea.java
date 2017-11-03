@@ -1,42 +1,40 @@
-package sample;
+package mindmap.view;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import sample.model.BubbleAreaBean;
-import sample.model.BubbleBean;
-import sample.model.ConnectorBean;
+import mindmap.controller.MainViewController;
+import mindmap.model.BubbleAreaBean;
+import mindmap.model.BubbleBean;
+import mindmap.model.ConnectorBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-@SuppressWarnings({"unchecked", "Duplicates"})
 public class BubbleArea extends Pane {
 
     public ArrayList<Bubble> bubbleArrayList;
 
-    public ArrayList<Connector> Connectors;
+    private ArrayList<Connector> connectorArrayList;
 
-    Controller controller;
+    private MainViewController mainViewController;
 
-    ObservableList<Bubble> bubbleObservableList;
+    public ObservableList<Bubble> bubbleObservableList;
 
-    Anchor startAnchor;
+    private Anchor startAnchor;
 
-    BubbleAreaBean bubbleAreaBean;
+    public BubbleAreaBean bubbleAreaBean;
 
-    public ArrayList<BubbleBean> bubbleBeanArrayList;
+    private ArrayList<BubbleBean> bubbleBeanArrayList;
 
-    public ArrayList<ConnectorBean> connectorBeanArrayList;
+    private ArrayList<ConnectorBean> connectorBeanArrayList;
 
-    BubbleArea(Controller controller) {
-        this.controller = controller;
-        Connectors = new ArrayList<>();
+    public BubbleArea(MainViewController mainViewController) {
+        this.mainViewController = mainViewController;
+        connectorArrayList = new ArrayList<>();
         bubbleArrayList = new ArrayList<>();
         this.bubbleObservableList = FXCollections.observableArrayList(bubbleArrayList);
 
@@ -48,7 +46,6 @@ public class BubbleArea extends Pane {
     }
 
     private void addListeners(final Bubble bubble) {
-
         final MyCubicCurve cubicCurveDraggable = new MyCubicCurve();
         this.getChildren().add(cubicCurveDraggable);
         cubicCurveDraggable.setVisible(false);
@@ -58,19 +55,9 @@ public class BubbleArea extends Pane {
         cubicCurveDraggable.setStrokeWidth(5);
         cubicCurveDraggable.setFill(null);
 
-        bubble.childCount.addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
-                controller.GenerateTree(bubbleArrayList);
-            }
-        });
+        bubble.childCount.addListener((ov, t, t1) -> mainViewController.GenerateTree(bubbleArrayList));
 
-        bubble.IsChild.addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
-                controller.GenerateTree(bubbleArrayList);
-            }
-        });
+        bubble.IsChild.addListener((ov, t, t1) -> mainViewController.GenerateTree(bubbleArrayList));
 
         // get anchors
         for (Anchor anchorNode : bubble.getAnchors()) {
@@ -134,7 +121,7 @@ public class BubbleArea extends Pane {
                         if (!bubbleC.children.contains(bubble) && !bubble.children.contains(bubbleC)) {
 
                             Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
-                            Connectors.add(connector);
+                            connectorArrayList.add(connector);
                             updateCanvas();
 
                             addConnectorToModel(connector.getConnectorBean());
@@ -142,14 +129,11 @@ public class BubbleArea extends Pane {
                     }
                 }
             });
-
-
-
         }
     }
 
-    public void AddBubble(Controller controller, double x, double y) throws IOException {
-        Bubble bubble = new Bubble(controller, this, x, y);
+    public void AddBubble(MainViewController mainViewController, double x, double y) throws IOException {
+        Bubble bubble = new Bubble(mainViewController, this, x, y);
         addListeners(bubble);
         this.bubbleArrayList.add(bubble);
         this.bubbleObservableList.add(bubble);
@@ -159,13 +143,13 @@ public class BubbleArea extends Pane {
 
 //    public void AddConnector(Bubble bubbleP, Bubble bubbleC, Bubble endAnchor){
 //        Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
-//        Connectors.add(connector);
+//        connectorArrayList.add(connector);
 //        updateCanvas();
 //    }
 
     public void AddConnector(ConnectorBean connectorBean){
         Connector connector = new Connector(connectorBean);
-        Connectors.add(connector);
+        connectorArrayList.add(connector);
         updateCanvas();
     }
 
@@ -184,21 +168,27 @@ public class BubbleArea extends Pane {
         bubbleBeanArrayList.add(bubbleBean);
     }
 
-    public void addConnectorToModel(ConnectorBean connectorBean) {
+    private void addConnectorToModel(ConnectorBean connectorBean) {
 //        System.out.println(connectorBean.toString());
         connectorBeanArrayList.add(connectorBean);
     }
 
-    public void RemoveBubble(Bubble b) throws IOException {
-        this.bubbleArrayList.remove(b);
-        this.bubbleObservableList.remove(b);
-        this.getChildren().remove(b);
+    public void removeBubble(Bubble bubble) {
+        this.bubbleArrayList.remove(bubble);
+        this.bubbleObservableList.remove(bubble);
+        this.getChildren().remove(bubble);
     }
 
-    public void updateCanvas() {
-        controller.GenerateTree(bubbleArrayList);
-        this.getChildren().add(Connectors.get(Connectors.size() - 1));
-//        System.out.println("connectors size: " + Connectors.size());
+    private void clearCanvas() {
+        this.bubbleObservableList.clear();
+        this.bubbleArrayList.clear();
+        this.connectorArrayList.clear();
+        this.getChildren().clear();
+    }
+
+    private void updateCanvas() {
+        this.mainViewController.GenerateTree(bubbleArrayList);
+        this.getChildren().add(connectorArrayList.get(connectorArrayList.size() - 1));
     }
 
     // TODO: add here back to model
@@ -206,8 +196,11 @@ public class BubbleArea extends Pane {
         this.bubbleBeanArrayList = bubbleAreaBean.getBubbleArrayList();
         this.connectorBeanArrayList = bubbleAreaBean.getConnectorBeanArrayList();
 
+        clearCanvas();
+
+        // add bubbles
         for (BubbleBean bubbleBean: bubbleBeanArrayList){
-            Bubble bubble = new Bubble(controller, this, bubbleBean.getBubbleX(), bubbleBean.getBubbleY());
+            Bubble bubble = new Bubble(mainViewController, this, bubbleBean.getBubbleX(), bubbleBean.getBubbleY());
             bubble.Title.setValue(bubbleBean.getBubbleText());
             bubble.BubbleColor.setValue(bubbleBean.bubbleColorProperty().getValue());
             bubble.BubbleFont.setValue(bubbleBean.bubbleFontProperty().getValue());
@@ -217,6 +210,7 @@ public class BubbleArea extends Pane {
             this.getChildren().add(bubble);
         }
 
+        // add connectors
         for (ConnectorBean connectorBean: connectorBeanArrayList){
 
             Anchor startAnchor = null;
@@ -224,20 +218,8 @@ public class BubbleArea extends Pane {
 
             for (Bubble bubble: bubbleArrayList){
                 for (Anchor anchorNode : bubble.getAnchors()) {
-
-//                    System.out.println("connectorBean.getStartX() :" + connectorBean.getStartX()
-//                            + " anchorNode.getHelpCenterX(): " + anchorNode.getHelpCenterX()
-//                            + " connectorBean.getStartY():  " + connectorBean.getStartY()
-//                            + " anchorNode.getHelpCenterY(): " + anchorNode.getHelpCenterY());
-//
-//                    System.out.println("connectorBean.getEndX() :" + connectorBean.getEndX()
-//                            + " anchorNode.getHelpCenterX(): " + anchorNode.getHelpCenterX()
-//                            + " connectorBean.getEndY():  " + connectorBean.getEndY()
-//                            + " anchorNode.getHelpCenterY(): " + anchorNode.getHelpCenterY());
-
                     if (connectorBean.getStartX() == anchorNode.getHelpCenterX()
                             && connectorBean.getStartY() == anchorNode.getHelpCenterY()){
-
                         startAnchor = anchorNode;
                     }
                     if (connectorBean.getEndX() == anchorNode.getHelpCenterX()
@@ -252,7 +234,7 @@ public class BubbleArea extends Pane {
                 Bubble bubbleC = (Bubble) endAnchor.getMyParent();
 
                 Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
-                Connectors.add(connector);
+                connectorArrayList.add(connector);
                 updateCanvas();
 
 //            addConnectorToModel(connector.getConnectorBean());

@@ -1,7 +1,9 @@
-package sample;
+package mindmap.utils;
 
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import mindmap.view.Bubble;
+import mindmap.view.OutlineItem;
 
 import java.util.ArrayList;
 

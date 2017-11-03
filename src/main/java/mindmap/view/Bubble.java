@@ -1,4 +1,4 @@
-package sample;
+package mindmap.view;
 
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
@@ -11,6 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import mindmap.controller.BubbleViewController;
+import mindmap.controller.MainViewController;
+import mindmap.utils.LoadData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,42 +22,42 @@ import java.util.Optional;
 @SuppressWarnings("Duplicates")
 public class Bubble extends Pane {
 
-    ArrayList<Bubble> children;
+    public ArrayList<Bubble> children;
 
-    ArrayList<Bubble> DirectParents;
+    public ArrayList<Bubble> DirectParents;
 
-    StringProperty Title;
+    public StringProperty Title;
 
-    ObjectProperty<Paint> BubbleColor;
+    public ObjectProperty<Paint> BubbleColor;
 
-    ObjectProperty<Font> BubbleFont;
+    public ObjectProperty<Font> BubbleFont;
 
-    StringProperty FontSize;
+    public StringProperty FontSize;
 
-    BooleanProperty IsChild;
+    public BooleanProperty IsChild;
 
-    IntegerProperty childCount;
+    public IntegerProperty childCount;
 
-    boolean isSelected;
+    public boolean isSelected;
 
-    Rectangle Cover;
+    public Rectangle Cover;
 
-    Label text;
+    public Label text;
 
-    ArrayList<Anchor> anchors;
+    public ArrayList<Anchor> anchors;
 
-    Anchor top;
-    Anchor bottom;
-    Anchor left;
-    Anchor right;
+    public Anchor top;
+    public Anchor bottom;
+    public Anchor left;
+    public Anchor right;
 
-    Controller aThis;
-    BubbleArea bubbleArea;
+    public MainViewController aThis;
+    public BubbleArea bubbleArea;
 
     final int ANCHOR_RADUIS = 8;
 
-    public Bubble(Controller aThis, BubbleArea bubbleArea, double x, double y) throws IOException {
-        LoadData ld = new LoadData("/BubbleView.fxml", BubbleViewController.class);
+    public Bubble(MainViewController aThis, BubbleArea bubbleArea, double x, double y) throws IOException {
+        LoadData ld = new LoadData("/fxml/BubbleView.fxml", BubbleViewController.class);
         this.children = new ArrayList<>();
         this.DirectParents = new ArrayList<>();
         this.anchors = new ArrayList<>();
@@ -82,10 +85,10 @@ public class Bubble extends Pane {
         left.toFront();
         right.toFront();
 
-//        top.setVisible(false);
-//        bottom.setVisible(false);
-//        left.setVisible(false);
-//        right.setVisible(false);
+        top.setVisible(false);
+        bottom.setVisible(false);
+        left.setVisible(false);
+        right.setVisible(false);
 
         this.setLayoutX(x);
         this.setLayoutY(y);
@@ -242,6 +245,13 @@ public class Bubble extends Pane {
         top.setVisible(!top.isVisible());
         left.setVisible(!left.isVisible());
         right.setVisible(!right.isVisible());
+    }
+
+    public void setAnchorsVisible(boolean isVisible){
+        bottom.setVisible(isVisible);
+        top.setVisible(isVisible);
+        left.setVisible(isVisible);
+        right.setVisible(isVisible);
     }
 
     public ArrayList<Anchor> getAnchors() {

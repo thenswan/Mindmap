@@ -1,16 +1,15 @@
-package sample.utils.jackson;
+package mindmap.utils.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import sample.model.BubbleAreaBean;
-import sample.model.BubbleBean;
-import sample.model.ConnectorBean;
+import mindmap.model.BubbleAreaBean;
+import mindmap.model.BubbleBean;
+import mindmap.model.ConnectorBean;
 
 import java.io.IOException;
 import java.util.ArrayList;

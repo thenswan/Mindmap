@@ -1,4 +1,4 @@
-package sample;
+package mindmap.view;
 
 import javafx.scene.Node;
 import javafx.scene.shape.CubicCurve;

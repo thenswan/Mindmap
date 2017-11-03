@@ -1,6 +1,5 @@
-package sample;
+package mindmap.view;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -8,27 +7,11 @@ import javafx.scene.shape.Circle;
 
 public class Anchor extends Circle {
 
-    Node parent;
+    private Node parent;
 
-    public double getHelpCenterX() {
-        return helpCenterX.get();
-    }
+    public SimpleDoubleProperty helpCenterX = new SimpleDoubleProperty();
 
-    public SimpleDoubleProperty helpCenterXProperty() {
-        return helpCenterX;
-    }
-
-    public double getHelpCenterY() {
-        return helpCenterY.get();
-    }
-
-    public SimpleDoubleProperty helpCenterYProperty() {
-        return helpCenterY;
-    }
-
-    SimpleDoubleProperty helpCenterX = new SimpleDoubleProperty();
-
-    SimpleDoubleProperty helpCenterY = new SimpleDoubleProperty();
+    public SimpleDoubleProperty helpCenterY = new SimpleDoubleProperty();
 
     public Anchor() {
     }
@@ -50,6 +33,22 @@ public class Anchor extends Circle {
         return this.parent;
     }
 
+    public double getHelpCenterX() {
+        return helpCenterX.get();
+    }
+
+    public SimpleDoubleProperty helpCenterXProperty() {
+        return helpCenterX;
+    }
+
+    public double getHelpCenterY() {
+        return helpCenterY.get();
+    }
+
+    public SimpleDoubleProperty helpCenterYProperty() {
+        return helpCenterY;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Circle){
@@ -67,4 +66,5 @@ public class Anchor extends Circle {
 
         return false;
     }
+
 }
