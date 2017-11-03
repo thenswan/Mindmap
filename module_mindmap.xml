@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mindmap" default="compile.module.mindmap">
+  <dirname property="module.mindmap.basedir" file="/module_mindmap.xml"/>
+  
+  <property name="module.jdk.home.mindmap" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.mindmap" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.mindmap" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.mindmap" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="mindmap.output.dir" value="${module.mindmap.basedir}/out/production/mindmap"/>
+  <property name="mindmap.testoutput.dir" value="${module.mindmap.basedir}/out/test/mindmap"/>
+  
+  <path id="mindmap.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mindmap.module.production.classpath">
+    <path refid="${module.jdk.classpath.mindmap}"/>
+  </path>
+  
+  <path id="mindmap.runtime.production.module.classpath">
+    <pathelement location="${mindmap.output.dir}"/>
+  </path>
+  
+  <path id="mindmap.module.classpath">
+    <path refid="${module.jdk.classpath.mindmap}"/>
+    <pathelement location="${mindmap.output.dir}"/>
+  </path>
+  
+  <path id="mindmap.runtime.module.classpath">
+    <pathelement location="${mindmap.testoutput.dir}"/>
+    <pathelement location="${mindmap.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mindmap">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mindmap">
+    <patternset refid="excluded.from.module.mindmap"/>
+  </patternset>
+  
+  <path id="mindmap.module.sourcepath">
+    <dirset dir="${module.mindmap.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mindmap" depends="compile.module.mindmap.production,compile.module.mindmap.tests" description="Compile module mindmap"/>
+  
+  <target name="compile.module.mindmap.production" depends="register.custom.compilers" description="Compile module mindmap; production classes">
+    <mkdir dir="${mindmap.output.dir}"/>
+    <javac2 destdir="${mindmap.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mindmap}/javac">
+      <compilerarg line="${compiler.args.mindmap}"/>
+      <bootclasspath refid="mindmap.module.bootclasspath"/>
+      <classpath refid="mindmap.module.production.classpath"/>
+      <src refid="mindmap.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mindmap"/>
+    </javac2>
+    
+    <copy todir="${mindmap.output.dir}">
+      <fileset dir="${module.mindmap.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mindmap.tests" depends="register.custom.compilers,compile.module.mindmap.production" description="compile module mindmap; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mindmap" description="cleanup module">
+    <delete dir="${mindmap.output.dir}"/>
+    <delete dir="${mindmap.testoutput.dir}"/>
+  </target>
+</project>

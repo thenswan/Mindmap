@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <VBox prefHeight="60.0" prefWidth="1600.0" style="-fx-background-color: silver;" BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar prefHeight="25.0" prefWidth="1600.0">
+               <menus>
+                  <Menu mnemonicParsing="false" text="File">
+                     <items>
+                        <MenuItem fx:id="openFile" mnemonicParsing="false" text="Open" />
+                        <MenuItem fx:id="saveAsJson" mnemonicParsing="false" text="Save" />
+                        <MenuItem fx:id="saveAsImage" mnemonicParsing="false" text="Save as image" />
+                     </items>
+                  </Menu>
+               </menus>
+            </MenuBar>
+            <ToolBar prefHeight="60.0" prefWidth="1600.0">
+               <items>
+                  <ToggleButton fx:id="anchorToggleButton" mnemonicParsing="false" />
+                  <ColorPicker fx:id="colorPicker" />
+                  <ComboBox fx:id="fontCombobox" prefWidth="150.0" />
+                  <ComboBox fx:id="fontSizeCombobox" prefWidth="150.0" />
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
+   </top>
+   <left>
+      <HBox alignment="CENTER_LEFT" prefHeight="843.0" prefWidth="1600.0" BorderPane.alignment="CENTER">
+         <children>
+            <!--<Pane fx:id="anchorPaneVisual" layoutX="156.0" layoutY="60.0" prefHeight="841.0" prefWidth="1446.0" />-->
+            <TreeView fx:id="Outline" minWidth="-Infinity" prefHeight="850.0" prefWidth="150.0" />
+            <AnchorPane fx:id="bubbleAreaWrapper" prefHeight="800.0" prefWidth="1450.0" />
+         </children>
+      </HBox>
+   </left>
+</BorderPane>

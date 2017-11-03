@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<Pane blendMode="SRC_ATOP" cache="false" disable="false" mouseTransparent="false" prefHeight="90.0" prefWidth="180.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.BubbleViewController">
+    <children>
+        <TextField fx:id="textField" editable="false" focusTraversable="true" layoutX="0.0" layoutY="30.0" onKeyReleased="#Typed" prefHeight="30.0" prefWidth="180.0" visible="false" />
+        <Label fx:id="Title" alignment="CENTER" cache="false" contentDisplay="CENTER" layoutX="19.0" layoutY="30.0" prefHeight="30.0" prefWidth="141.0" text="Text">
+            <font>
+                <Font name="System Regular" size="18.0" />
+            </font>
+        </Label>
+        <Rectangle fx:id="cover" arcHeight="40.0" arcWidth="40.0" fill="#1e90ff00" height="90.0" layoutX="0.0" layoutY="0.0" opacity="1" pickOnBounds="true" stroke="BLACK" strokeDashOffset="0.0" strokeLineJoin="MITER" strokeType="INSIDE" strokeWidth="1.5" visible="true" width="180.0" />
+        <Circle fx:id="top" layoutX="90.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.6" visible="false" />
+        <Circle fx:id="right" layoutX="180.0" layoutY="40.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.6" visible="false" />
+        <Circle fx:id="bottom" layoutX="90.0" layoutY="90.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.6" visible="false" />
+        <Circle fx:id="left" layoutY="45.0" radius="5.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="1.6" visible="false" />
+    </children>
+</Pane>
