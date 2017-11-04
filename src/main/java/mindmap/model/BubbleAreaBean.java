@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 public class BubbleAreaBean {
 
-    private ArrayList<BubbleBean> bubbleArrayList;
+    private ArrayList<BubbleBean> bubbleBeanArrayList;
 
     private ArrayList<ConnectorBean> connectorBeanArrayList;
 
-    public ArrayList<BubbleBean> getBubbleArrayList() {
-        return bubbleArrayList;
+    public ArrayList<BubbleBean> getBubbleBeanArrayList() {
+        return bubbleBeanArrayList;
     }
 
-    public void setBubbleArrayList(ArrayList<BubbleBean> bubbleArrayList) {
-        this.bubbleArrayList = bubbleArrayList;
+    public void setBubbleBeanArrayList(ArrayList<BubbleBean> bubbleBeanArrayList) {
+        this.bubbleBeanArrayList = bubbleBeanArrayList;
     }
 
     public ArrayList<ConnectorBean> getConnectorBeanArrayList() {
@@ -27,7 +27,7 @@ public class BubbleAreaBean {
     @Override
     public String toString() {
         return "BubbleAreaBean{" + "\n" +
-                "bubbleArrayList=" + bubbleArrayList +
+                "bubbleBeanArrayList=" + bubbleBeanArrayList +
                 "\n connectorBeanArrayList=" + connectorBeanArrayList +
                 "\n}";
     }

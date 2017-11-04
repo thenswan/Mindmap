@@ -9,15 +9,15 @@ import javafx.scene.text.Font;
 
 public class BubbleBean {
 
-    SimpleDoubleProperty bubbleX = new SimpleDoubleProperty();
+    private SimpleDoubleProperty bubbleX = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty bubbleY = new SimpleDoubleProperty();
+    private SimpleDoubleProperty bubbleY = new SimpleDoubleProperty();
 
-    SimpleStringProperty bubbleText = new SimpleStringProperty();
+    private SimpleStringProperty bubbleText = new SimpleStringProperty();
 
-    ObjectProperty<Paint> bubbleColor = new SimpleObjectProperty<>();
+    private ObjectProperty<Paint> bubbleColor = new SimpleObjectProperty<>();
 
-    ObjectProperty<Font> bubbleFont = new SimpleObjectProperty<>();
+    private ObjectProperty<Font> bubbleFont = new SimpleObjectProperty<>();
 
     public double getBubbleX() {
         return bubbleX.get();

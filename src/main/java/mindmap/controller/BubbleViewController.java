@@ -16,13 +16,14 @@ import java.util.ResourceBundle;
 public class BubbleViewController implements Initializable {
 
     @FXML
-    public Rectangle cover;
+    public Rectangle coverRectangle;
 
     @FXML
+    private
     TextField textField;
 
     @FXML
-    public Label Title;
+    public Label titleLabel;
 
     @FXML
     Circle top;
@@ -41,30 +42,28 @@ public class BubbleViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-//        this.Title.setFont(Font.font("System Regular", 16));
-        Title.toFront();
+        titleLabel.toFront();
     }
 
     @FXML
     private void Typed(KeyEvent event) {
         if (event.getCode() == KeyCode.ESCAPE) {
-            this.Title.setVisible(true);
+            this.titleLabel.setVisible(true);
             this.textField.setVisible(false);
 
             textField.setFocusTraversable(false);
             textField.setEditable(false);
-            this.cover.setVisible(true);
+            this.coverRectangle.setVisible(true);
         }
     }
 
     public void toggleSelected(boolean isSelected) {
         if (isSelected) {
-//            this.cover.setEffect(new DropShadow(10, 0, 0, Color.GREEN));
-            this.cover.setStroke(Color.GREEN);
+//            this.coverRectangle.setEffect(new DropShadow(10, 0, 0, Color.GREEN));
+            this.coverRectangle.setStroke(Color.GREEN);
         } else {
-            this.cover.setEffect(null);
-            this.cover.setStroke(Color.BLACK);
+            this.coverRectangle.setEffect(null);
+            this.coverRectangle.setStroke(Color.BLACK);
         }
 
     }

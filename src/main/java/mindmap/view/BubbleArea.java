@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
 import mindmap.controller.MainViewController;
 import mindmap.model.BubbleAreaBean;
 import mindmap.model.BubbleBean;
@@ -16,149 +17,133 @@ import java.util.ArrayList;
 
 public class BubbleArea extends Pane {
 
-    public ArrayList<Bubble> bubbleArrayList;
+    private ArrayList<Bubble> bubbleArrayList;
+
+    private ObservableList<Bubble> bubbleObservableList;
 
     private ArrayList<Connector> connectorArrayList;
 
-    private MainViewController mainViewController;
-
-    public ObservableList<Bubble> bubbleObservableList;
-
-    private Anchor startAnchor;
-
-    public BubbleAreaBean bubbleAreaBean;
+    private BubbleAreaBean bubbleAreaBean;
 
     private ArrayList<BubbleBean> bubbleBeanArrayList;
 
     private ArrayList<ConnectorBean> connectorBeanArrayList;
 
+    private MainViewController mainViewController;
+
+    private Anchor startAnchor;
+
     public BubbleArea(MainViewController mainViewController) {
         this.mainViewController = mainViewController;
-        connectorArrayList = new ArrayList<>();
         bubbleArrayList = new ArrayList<>();
         this.bubbleObservableList = FXCollections.observableArrayList(bubbleArrayList);
-
+        connectorArrayList = new ArrayList<>();
         bubbleAreaBean = new BubbleAreaBean();
         bubbleBeanArrayList = new ArrayList<>();
         connectorBeanArrayList = new ArrayList<>();
-        bubbleAreaBean.setBubbleArrayList(bubbleBeanArrayList);
+
+        bubbleAreaBean.setBubbleBeanArrayList(bubbleBeanArrayList);
         bubbleAreaBean.setConnectorBeanArrayList(connectorBeanArrayList);
     }
 
     private void addListeners(final Bubble bubble) {
-        final MyCubicCurve cubicCurveDraggable = new MyCubicCurve();
-        this.getChildren().add(cubicCurveDraggable);
-        cubicCurveDraggable.setVisible(false);
+        final CubicCurve cubicCurve = new CubicCurve();
+        this.getChildren().add(cubicCurve);
+        cubicCurve.setVisible(false);
         bubble.isPickOnBounds();
 
-        cubicCurveDraggable.setStroke(Color.ORANGE);
-        cubicCurveDraggable.setStrokeWidth(5);
-        cubicCurveDraggable.setFill(null);
+        cubicCurve.setStroke(Color.ORANGE);
+        cubicCurve.setStrokeWidth(5);
+        cubicCurve.setFill(null);
 
-        bubble.childCount.addListener((ov, t, t1) -> mainViewController.GenerateTree(bubbleArrayList));
+        bubble.childCount.addListener((ov, t, t1) -> mainViewController.generateTreeView(bubbleArrayList));
 
-        bubble.IsChild.addListener((ov, t, t1) -> mainViewController.GenerateTree(bubbleArrayList));
+        bubble.isChild.addListener((ov, t, t1) -> mainViewController.generateTreeView(bubbleArrayList));
 
-        // get anchors
-        for (Anchor anchorNode : bubble.getAnchors()) {
+        for (Anchor anchor : bubble.getAnchorArrayList()) {
 
-            SimpleDoubleProperty mousePositionX = new SimpleDoubleProperty();
-            SimpleDoubleProperty mousePositionY = new SimpleDoubleProperty();
+            SimpleDoubleProperty mousePositionXScene = new SimpleDoubleProperty();
+            SimpleDoubleProperty mousePositionYScene = new SimpleDoubleProperty();
 
-            SimpleDoubleProperty mousePositionX1 = new SimpleDoubleProperty();
-            SimpleDoubleProperty mousePositionY1 = new SimpleDoubleProperty();
+            SimpleDoubleProperty mousePositionXRelative = new SimpleDoubleProperty();
+            SimpleDoubleProperty mousePositionYRelative = new SimpleDoubleProperty();
 
-            anchorNode.setOnMousePressed(e -> {
-//                System.out.println(e.toString());
-
-                cubicCurveDraggable.setVisible(true);
+            anchor.setOnMousePressed(e -> {
+                cubicCurve.setVisible(true);
 
                 startAnchor = (Anchor) e.getSource();
-                cubicCurveDraggable.setParent(startAnchor);
-                cubicCurveDraggable.startXProperty().bind(startAnchor.helpCenterXProperty());
-                cubicCurveDraggable.startYProperty().bind(startAnchor.helpCenterYProperty());
-                cubicCurveDraggable.controlX1Property().bind(startAnchor.helpCenterXProperty());
-                cubicCurveDraggable.controlY1Property().bind(startAnchor.helpCenterYProperty());
+                cubicCurve.startXProperty().bind(startAnchor.helpCenterXProperty());
+                cubicCurve.startYProperty().bind(startAnchor.helpCenterYProperty());
+                cubicCurve.controlX1Property().bind(startAnchor.helpCenterXProperty());
+                cubicCurve.controlY1Property().bind(startAnchor.helpCenterYProperty());
 
-                mousePositionX.set(e.getSceneX());
-                mousePositionY.set(e.getSceneY());
-                mousePositionX1.set(startAnchor.getHelpCenterX());
-                mousePositionY1.set(startAnchor.getHelpCenterY());
+                mousePositionXScene.set(e.getSceneX());
+                mousePositionYScene.set(e.getSceneY());
+                mousePositionXRelative.set(startAnchor.getHelpCenterX());
+                mousePositionYRelative.set(startAnchor.getHelpCenterY());
 
-                cubicCurveDraggable.controlX2Property().bind(mousePositionX1);
-                cubicCurveDraggable.controlY2Property().bind(mousePositionY1);
-                cubicCurveDraggable.endXProperty().bind(mousePositionX1);
-                cubicCurveDraggable.endYProperty().bind(mousePositionY1);
+                cubicCurve.controlX2Property().bind(mousePositionXRelative);
+                cubicCurve.controlY2Property().bind(mousePositionYRelative);
+                cubicCurve.endXProperty().bind(mousePositionXRelative);
+                cubicCurve.endYProperty().bind(mousePositionYRelative);
             });
 
-            anchorNode.setOnMouseDragged(e -> {
-                double deltaX = e.getSceneX() - mousePositionX.get();
-                double deltaY = e.getSceneY() - mousePositionY.get();
-                mousePositionX1.set(startAnchor.getHelpCenterX() + deltaX);
-                mousePositionY1.set(startAnchor.getHelpCenterY() + deltaY);
-                double valueX = 0;
+            anchor.setOnMouseDragged(e -> {
+                double deltaX = e.getSceneX() - mousePositionXScene.get();
+                double deltaY = e.getSceneY() - mousePositionYScene.get();
+                mousePositionXRelative.set(startAnchor.getHelpCenterX() + deltaX);
+                mousePositionYRelative.set(startAnchor.getHelpCenterY() + deltaY);
+                double valueX;
                 if (startAnchor.getHelpCenterX() + deltaX > startAnchor.getHelpCenterX()) {
                     valueX = startAnchor.getHelpCenterX() + deltaX - startAnchor.getHelpCenterX();
                 } else {
                     valueX = startAnchor.getHelpCenterX() - startAnchor.getHelpCenterX() + deltaX;
                 }
-                cubicCurveDraggable.controlX1Property().bind(startAnchor.helpCenterXProperty().add(valueX));
-                cubicCurveDraggable.controlY1Property().bind(startAnchor.helpCenterYProperty());
-                cubicCurveDraggable.controlX2Property().bind(mousePositionX1);
-                cubicCurveDraggable.controlY2Property().bind(mousePositionY1);
+                cubicCurve.controlX1Property().bind(startAnchor.helpCenterXProperty().add(valueX));
+                cubicCurve.controlY1Property().bind(startAnchor.helpCenterYProperty());
+                cubicCurve.controlX2Property().bind(mousePositionXRelative);
+                cubicCurve.controlY2Property().bind(mousePositionYRelative);
             });
 
-            anchorNode.setOnMouseReleased(e -> {
-                cubicCurveDraggable.setVisible(false);
+            anchor.setOnMouseReleased(e -> {
+                cubicCurve.setVisible(false);
+                Node pickedNode = e.getPickResult().getIntersectedNode();
 
-                Node picked = e.getPickResult().getIntersectedNode();
-//                System.out.println(picked.toString());
-                if (picked instanceof Anchor) {
-                    Anchor endAnchor = (Anchor) e.getPickResult().getIntersectedNode();
+                if (pickedNode instanceof Anchor) {
+                    Anchor endAnchor = (Anchor) pickedNode;
+
                     if (!startAnchor.equals(endAnchor) && !startAnchor.equalsByParent(endAnchor)) {
-                        Bubble bubbleP = (Bubble) startAnchor.getMyParent();
-                        Bubble bubbleC = (Bubble) endAnchor.getMyParent();
-                        if (!bubbleC.children.contains(bubble) && !bubble.children.contains(bubbleC)) {
+                        Bubble bubbleParent = (Bubble) startAnchor.getMyParent();
+                        Bubble bubbleChild = (Bubble) endAnchor.getMyParent();
 
-                            Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
+                        if (!bubbleChild.childrenBubblesArrayList.contains(bubble) && !bubble.childrenBubblesArrayList.contains(bubbleChild)) {
+                            Connector connector = new Connector(bubbleParent, bubbleChild, startAnchor, endAnchor);
                             connectorArrayList.add(connector);
                             updateCanvas();
-
                             addConnectorToModel(connector.getConnectorBean());
                         }
                     }
                 }
             });
+
         }
     }
 
-    public void AddBubble(MainViewController mainViewController, double x, double y) throws IOException {
+    public void addBubble(MainViewController mainViewController, double x, double y) throws IOException {
         Bubble bubble = new Bubble(mainViewController, this, x, y);
-        addListeners(bubble);
+        this.addListeners(bubble);
         this.bubbleArrayList.add(bubble);
         this.bubbleObservableList.add(bubble);
         this.getChildren().add(bubble);
-        AddBubbleToModel(bubble);
+        addBubbleToModel(bubble);
     }
 
-//    public void AddConnector(Bubble bubbleP, Bubble bubbleC, Bubble endAnchor){
-//        Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
-//        connectorArrayList.add(connector);
-//        updateCanvas();
-//    }
-
-    public void AddConnector(ConnectorBean connectorBean){
-        Connector connector = new Connector(connectorBean);
-        connectorArrayList.add(connector);
-        updateCanvas();
-    }
-
-    public void AddBubbleToModel(Bubble bubble){
+    private void addBubbleToModel(Bubble bubble){
         BubbleBean bubbleBean = new BubbleBean();
         // x, y coordinates
         bubbleBean.bubbleXProperty().bind(bubble.layoutXProperty());
         bubbleBean.bubbleYProperty().bind(bubble.layoutYProperty());
-        // save text
+        // save titleLabel
         bubbleBean.bubbleTextProperty().bind(bubble.Title);
         // save color
         bubbleBean.bubbleColorProperty().bind(bubble.BubbleColor);
@@ -169,14 +154,12 @@ public class BubbleArea extends Pane {
     }
 
     private void addConnectorToModel(ConnectorBean connectorBean) {
-//        System.out.println(connectorBean.toString());
         connectorBeanArrayList.add(connectorBean);
     }
 
-    public void removeBubble(Bubble bubble) {
-        this.bubbleArrayList.remove(bubble);
-        this.bubbleObservableList.remove(bubble);
-        this.getChildren().remove(bubble);
+    private void updateCanvas() {
+        this.mainViewController.generateTreeView(bubbleArrayList);
+        this.getChildren().add(connectorArrayList.get(connectorArrayList.size() - 1));
     }
 
     private void clearCanvas() {
@@ -186,17 +169,11 @@ public class BubbleArea extends Pane {
         this.getChildren().clear();
     }
 
-    private void updateCanvas() {
-        this.mainViewController.GenerateTree(bubbleArrayList);
-        this.getChildren().add(connectorArrayList.get(connectorArrayList.size() - 1));
-    }
-
-    // TODO: add here back to model
     public void deserialize(BubbleAreaBean bubbleAreaBean) throws IOException {
-        this.bubbleBeanArrayList = bubbleAreaBean.getBubbleArrayList();
-        this.connectorBeanArrayList = bubbleAreaBean.getConnectorBeanArrayList();
-
         clearCanvas();
+
+        this.bubbleBeanArrayList = bubbleAreaBean.getBubbleBeanArrayList();
+        this.connectorBeanArrayList = bubbleAreaBean.getConnectorBeanArrayList();
 
         // add bubbles
         for (BubbleBean bubbleBean: bubbleBeanArrayList){
@@ -212,12 +189,11 @@ public class BubbleArea extends Pane {
 
         // add connectors
         for (ConnectorBean connectorBean: connectorBeanArrayList){
-
             Anchor startAnchor = null;
             Anchor endAnchor = null;
 
             for (Bubble bubble: bubbleArrayList){
-                for (Anchor anchorNode : bubble.getAnchors()) {
+                for (Anchor anchorNode : bubble.getAnchorArrayList()) {
                     if (connectorBean.getStartX() == anchorNode.getHelpCenterX()
                             && connectorBean.getStartY() == anchorNode.getHelpCenterY()){
                         startAnchor = anchorNode;
@@ -230,19 +206,26 @@ public class BubbleArea extends Pane {
             }
 
             if (startAnchor != null && endAnchor != null) {
-                Bubble bubbleP = (Bubble) startAnchor.getMyParent();
-                Bubble bubbleC = (Bubble) endAnchor.getMyParent();
-
-                Connector connector = new Connector(bubbleP, bubbleC, startAnchor, endAnchor);
+                Bubble bubbleParent = (Bubble) startAnchor.getMyParent();
+                Bubble bubbleChild = (Bubble) endAnchor.getMyParent();
+                Connector connector = new Connector(bubbleParent, bubbleChild, startAnchor, endAnchor);
                 connectorArrayList.add(connector);
                 updateCanvas();
-
-//            addConnectorToModel(connector.getConnectorBean());
             }
-
         }
 
     }
 
+    public ArrayList<Bubble> getBubbleArrayList() {
+        return bubbleArrayList;
+    }
+
+    public ObservableList<Bubble> getBubbleObservableList() {
+        return bubbleObservableList;
+    }
+
+    public BubbleAreaBean getBubbleAreaBean() {
+        return bubbleAreaBean;
+    }
 
 }

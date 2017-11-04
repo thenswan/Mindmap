@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+// TODO: refactoring
+
 public class Mindmap extends Application {
 
     @Override

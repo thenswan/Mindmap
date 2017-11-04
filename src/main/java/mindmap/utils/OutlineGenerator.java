@@ -23,7 +23,7 @@ public class OutlineGenerator {
     private static ArrayList<Bubble> getParents(final ArrayList<Bubble> allB) throws InterruptedException {
         final ArrayList<Bubble> parents = new ArrayList<>();
         for (Bubble b : allB) {
-            if (!b.IsChild.get()) {
+            if (!b.isChild.get()) {
                 parents.add(b);
             }
         }

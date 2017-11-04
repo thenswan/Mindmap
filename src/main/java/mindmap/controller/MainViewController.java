@@ -10,15 +10,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import mindmap.utils.OutlineGenerator;
 import mindmap.model.BubbleAreaBean;
+import mindmap.utils.OutlineGenerator;
 import mindmap.utils.jackson.BubbleAreaBeanDeserializer;
 import mindmap.view.Bubble;
 import mindmap.view.BubbleArea;
@@ -32,10 +31,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// TODO: удаление bubble
-// TODO: удаление связей
-
 public class MainViewController {
+
+    /**
+     * Fields
+     */
+
+    @FXML
+    private MenuItem openFile;
+
+    @FXML
+    private MenuItem saveAsImage;
+
+    @FXML
+    private MenuItem saveFile;
+
+    @FXML
+    private ToggleButton anchorToggleButton;
 
     @FXML
     public ColorPicker colorPicker;
@@ -47,24 +59,16 @@ public class MainViewController {
     public ComboBox<String> fontSizeCombobox;
 
     @FXML
-    private TreeView<String> Outline;
+    private TreeView<String> treeView;
 
     @FXML
     private AnchorPane bubbleAreaWrapper;
 
-    @FXML
-    private ToggleButton anchorToggleButton;
+    /**
+     * Utility variables
+     */
 
-    @FXML
-    private MenuItem openFile;
-
-    @FXML
-    private MenuItem saveAsImage;
-
-    @FXML
-    private MenuItem saveAsJson;
-
-    private TreeItem TreeRoot;
+    private TreeItem treeRoot;
 
     public Bubble selectedBubble;
 
@@ -76,7 +80,7 @@ public class MainViewController {
 
     private double contextMenuY;
 
-    BubbleAreaBean bubbleAreaBean;
+    private BubbleAreaBean bubbleAreaBean;
 
     public void initialize() {
 
@@ -84,16 +88,16 @@ public class MainViewController {
         bubbleArea = new BubbleArea(this);
         bubbleArea.setPrefHeight(850);
         bubbleArea.setPrefWidth(1450);
-
-        bubbleAreaBean = bubbleArea.bubbleAreaBean;
-
         bubbleAreaWrapper.getChildren().addAll(bubbleArea);
 
+        // init model
+        bubbleAreaBean = bubbleArea.getBubbleAreaBean();
+
         // init tree view
-        TreeRoot = new TreeItem("Root");
-        Outline.setRoot(TreeRoot);
-        Outline.setShowRoot(false);
-        GenerateTree(bubbleArea.bubbleArrayList);
+        treeRoot = new TreeItem("Root");
+        treeView.setRoot(treeRoot);
+        treeView.setShowRoot(false);
+        generateTreeView(bubbleArea.getBubbleArrayList());
 
         // init font combobox
         List<String> fontFamilies = Font.getFamilies();
@@ -118,10 +122,10 @@ public class MainViewController {
         });
 
         saveAsImage.setOnAction(e -> {
-            captureAndSaveDisplay();
+            saveAsImage();
         });
 
-        saveAsJson.setOnAction(e -> {
+        saveFile.setOnAction(e -> {
             saveFile();
         });
 
@@ -136,24 +140,22 @@ public class MainViewController {
         });
         colorPicker.setOnAction(e -> {
             if (selectedBubble != null){
-                selectedBubble.Cover.setFill(colorPicker.getValue());
+                selectedBubble.coverRectangle.setFill(colorPicker.getValue());
             }
         });
         fontCombobox.getSelectionModel().selectedItemProperty().addListener((o, oldVal, newVal) -> {
             if (selectedBubble != null){
-                selectedBubble.text.setFont(Font.font(newVal));
+                selectedBubble.titleLabel.setFont(Font.font(newVal));
             }
         });
         fontSizeCombobox.getSelectionModel().selectedItemProperty().addListener((o, oldVal, newVal) -> {
             if (selectedBubble != null){
-                selectedBubble.text.setFont(Font.font(selectedBubble.text.getFont().getName(), Double.parseDouble(newVal)));
+                selectedBubble.titleLabel.setFont(Font.font(selectedBubble.titleLabel.getFont().getName(), Double.parseDouble(newVal)));
             }
         });
 
-
         contextMenu = new ContextMenu();
-        contextMenu.autoHideProperty().setValue(true);
-        MenuItem menuItem = new MenuItem("Add Bubble");
+        MenuItem menuItem = new MenuItem("Add bubble");
         contextMenu.getItems().add(menuItem);
         bubbleArea.setPickOnBounds(true);
 
@@ -172,62 +174,34 @@ public class MainViewController {
 
         menuItem.setOnAction(t -> {
             try {
-                bubbleArea.AddBubble(this, contextMenuX, contextMenuY);
+                bubbleArea.addBubble(this, contextMenuX, contextMenuY);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         });
 
-        bubbleArea.bubbleObservableList.addListener((ListChangeListener<Bubble>) change -> GenerateTree(bubbleArea.bubbleArrayList));
+        bubbleArea.getBubbleObservableList().addListener((ListChangeListener<Bubble>) change -> generateTreeView(bubbleArea.getBubbleArrayList()));
 
-        // TODO
-//        bubbleAreaWrapper.setOnKeyPressed(e -> {
-//            System.out.println(e.toString());
-//            try {
-//                if (e.getCode() == KeyCode.DELETE) {
-//                    System.out.println("Removing selected bubble");
-//                    for (int i = 0; i < bubbleArea.bubbleArrayList.size(); i++) {
-//                        Bubble bubble = bubbleArea.bubbleArrayList.get(i);
-//                        if (bubble.isSelected) {
-//                            System.out.println("Removing selected bubble");
-//                            bubbleArea.removeBubble(bubble);
-//                        }
-//
-//                    }
-//
-//                }
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        });
     }
 
-    public void GenerateTree(final ArrayList<Bubble> Bubbles) {
+    public void generateTreeView(final ArrayList<Bubble> Bubbles) {
         try {
-//            System.out.println("Generating tree");
-            OutlineGenerator.Build(Bubbles, Outline);
+            OutlineGenerator.Build(Bubbles, treeView);
         } catch (InterruptedException ex) {
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void captureAndSaveDisplay(){
+    private void saveAsImage(){
         FileChooser fileChooser = new FileChooser();
-
-        //Set extension filter
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("png files (*.png)", "*.png"));
-
-        //Prompt user to select a file
         File file = fileChooser.showSaveDialog(null);
-
         if(file != null){
             try {
-                //Pad the capture area
                 WritableImage writableImage = new WritableImage((int)bubbleArea.getWidth() + 20,
                         (int)bubbleArea.getHeight() + 20);
                 bubbleArea.snapshot(null, writableImage);
                 RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
-                //Write the snapshot to the chosen file
                 ImageIO.write(renderedImage, "png", file);
             } catch (IOException ex) { ex.printStackTrace(); }
         }
@@ -237,17 +211,13 @@ public class MainViewController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("json files (*.json)", "*.json"));
         File file = fileChooser.showOpenDialog(null);
-
-
         if (file != null){
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
-
                 SimpleModule module = new SimpleModule();
                 module.addDeserializer(BubbleAreaBean.class, new BubbleAreaBeanDeserializer());
                 objectMapper.registerModule(module);
                 bubbleAreaBean = objectMapper.readValue(file, BubbleAreaBean.class);
-//                System.out.println(bubbleAreaBean.toString());
                 bubbleArea.deserialize(bubbleAreaBean);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -259,14 +229,10 @@ public class MainViewController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("json files (*.json)", "*.json"));
         File file = fileChooser.showSaveDialog(null);
-
         if (file != null){
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 objectMapper.writeValue(file, bubbleAreaBean);
-
-//                System.out.println(bubbleAreaBean.toString());
-//                System.out.println(objectMapper.writeValueAsString(bubbleAreaBean));
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

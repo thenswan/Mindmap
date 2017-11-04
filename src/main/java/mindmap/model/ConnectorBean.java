@@ -4,21 +4,21 @@ import javafx.beans.property.SimpleDoubleProperty;
 
 public class ConnectorBean {
 
-    SimpleDoubleProperty startX = new SimpleDoubleProperty();
+    private SimpleDoubleProperty startX = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty startY = new SimpleDoubleProperty();
+    private SimpleDoubleProperty startY = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty controlX1 = new SimpleDoubleProperty();
+    private SimpleDoubleProperty controlX1 = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty controlY1 = new SimpleDoubleProperty();
+    private SimpleDoubleProperty controlY1 = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty controlX2 = new SimpleDoubleProperty();
+    private SimpleDoubleProperty controlX2 = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty controlY2 = new SimpleDoubleProperty();
+    private SimpleDoubleProperty controlY2 = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty endX = new SimpleDoubleProperty();
+    private SimpleDoubleProperty endX = new SimpleDoubleProperty();
 
-    SimpleDoubleProperty endY = new SimpleDoubleProperty();
+    private SimpleDoubleProperty endY = new SimpleDoubleProperty();
 
     public double getStartX() {
         return startX.get();

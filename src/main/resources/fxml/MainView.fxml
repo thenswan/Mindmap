@@ -11,7 +11,7 @@
                   <Menu mnemonicParsing="false" text="File">
                      <items>
                         <MenuItem fx:id="openFile" mnemonicParsing="false" text="Open" />
-                        <MenuItem fx:id="saveAsJson" mnemonicParsing="false" text="Save" />
+                        <MenuItem fx:id="saveFile" mnemonicParsing="false" text="Save" />
                         <MenuItem fx:id="saveAsImage" mnemonicParsing="false" text="Save as image" />
                      </items>
                   </Menu>
@@ -31,7 +31,7 @@
    <left>
       <HBox alignment="CENTER_LEFT" prefHeight="843.0" prefWidth="1600.0" BorderPane.alignment="CENTER">
          <children>
-            <TreeView fx:id="Outline" minWidth="-Infinity" prefHeight="850.0" prefWidth="150.0" />
+            <TreeView fx:id="treeView" minWidth="-Infinity" prefHeight="850.0" prefWidth="150.0" />
             <AnchorPane fx:id="bubbleAreaWrapper" prefHeight="800.0" prefWidth="1450.0" />
          </children>
       </HBox>

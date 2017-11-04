@@ -23,7 +23,7 @@ public class BubbleAreaBeanDeserializer extends JsonDeserializer<BubbleAreaBean>
         BubbleAreaBean bubbleAreaBean = new BubbleAreaBean();
         ArrayList<BubbleBean> bubbleArrayList = new ArrayList<>();
         ArrayList<ConnectorBean> connectorBeanArrayList = new ArrayList<>();
-        bubbleAreaBean.setBubbleArrayList(bubbleArrayList);
+        bubbleAreaBean.setBubbleBeanArrayList(bubbleArrayList);
         bubbleAreaBean.setConnectorBeanArrayList(connectorBeanArrayList);
 
         JsonNode rootNode = jsonParser.getCodec().readTree(jsonParser);

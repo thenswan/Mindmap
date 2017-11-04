@@ -22,139 +22,125 @@ import java.util.Optional;
 @SuppressWarnings("Duplicates")
 public class Bubble extends Pane {
 
-    public ArrayList<Bubble> children;
+    ArrayList<Bubble> childrenBubblesArrayList;
 
-    public ArrayList<Bubble> DirectParents;
+    ArrayList<Bubble> parentBubblesArrayList;
 
-    public StringProperty Title;
+    StringProperty Title;
 
-    public ObjectProperty<Paint> BubbleColor;
+    ObjectProperty<Paint> BubbleColor;
 
-    public ObjectProperty<Font> BubbleFont;
+    ObjectProperty<Font> BubbleFont;
 
-    public StringProperty FontSize;
+    public BooleanProperty isChild;
 
-    public BooleanProperty IsChild;
+    IntegerProperty childCount;
 
-    public IntegerProperty childCount;
+    private boolean isSelected;
 
-    public boolean isSelected;
+    public Rectangle coverRectangle;
 
-    public Rectangle Cover;
+    public Label titleLabel;
 
-    public Label text;
+    private ArrayList<Anchor> anchorArrayList;
 
-    public ArrayList<Anchor> anchors;
+    private Anchor topAnchor;
 
-    public Anchor top;
-    public Anchor bottom;
-    public Anchor left;
-    public Anchor right;
+    private Anchor bottomAnchor;
 
-    public MainViewController aThis;
-    public BubbleArea bubbleArea;
+    private Anchor leftAnchor;
 
-    final int ANCHOR_RADUIS = 8;
+    private Anchor rightAnchor;
 
-    public Bubble(MainViewController aThis, BubbleArea bubbleArea, double x, double y) throws IOException {
-        LoadData ld = new LoadData("/fxml/BubbleView.fxml", BubbleViewController.class);
-        this.children = new ArrayList<>();
-        this.DirectParents = new ArrayList<>();
-        this.anchors = new ArrayList<>();
+    private MainViewController mainViewController;
 
-        this.aThis = aThis;
+    private BubbleArea bubbleArea;
+
+    private final int ANCHOR_RADUIS = 8;
+
+    public Bubble(MainViewController mainViewController, BubbleArea bubbleArea, double x, double y) throws IOException {
+        LoadData loadData = new LoadData("/fxml/BubbleView.fxml", BubbleViewController.class);
+        this.childrenBubblesArrayList = new ArrayList<>();
+        this.parentBubblesArrayList = new ArrayList<>();
+        this.anchorArrayList = new ArrayList<>();
+        this.mainViewController = mainViewController;
         this.bubbleArea = bubbleArea;
-        this.getChildren().add(ld.node);
-        BubbleViewController ctrl = (BubbleViewController) ld.Controller;
+        this.getChildren().add(loadData.node);
 
-        this.Cover = ctrl.cover;
-        this.text = ctrl.Title;
+        BubbleViewController bubbleViewController = (BubbleViewController) loadData.controller;
 
-        this.top = new Anchor(Cover.getWidth() / 2, 0, ANCHOR_RADUIS);
-        this.right = new Anchor(Cover.getWidth(), Cover.getHeight() / 2, ANCHOR_RADUIS);
-        this.bottom = new Anchor(Cover.getWidth() / 2, Cover.getHeight(), ANCHOR_RADUIS);
-        this.left = new Anchor(0, Cover.getHeight() / 2, ANCHOR_RADUIS);
+        this.coverRectangle = bubbleViewController.coverRectangle;
+        this.titleLabel = bubbleViewController.titleLabel;
 
-        top.setParent(this);
-        bottom.setParent(this);
-        left.setParent(this);
-        right.setParent(this);
+        this.topAnchor = new Anchor(coverRectangle.getWidth() / 2, 0, ANCHOR_RADUIS);
+        this.rightAnchor = new Anchor(coverRectangle.getWidth(), coverRectangle.getHeight() / 2, ANCHOR_RADUIS);
+        this.bottomAnchor = new Anchor(coverRectangle.getWidth() / 2, coverRectangle.getHeight(), ANCHOR_RADUIS);
+        this.leftAnchor = new Anchor(0, coverRectangle.getHeight() / 2, ANCHOR_RADUIS);
 
-        top.toFront();
-        bottom.toFront();
-        left.toFront();
-        right.toFront();
+        topAnchor.setParent(this);
+        bottomAnchor.setParent(this);
+        leftAnchor.setParent(this);
+        rightAnchor.setParent(this);
 
-        top.setVisible(false);
-        bottom.setVisible(false);
-        left.setVisible(false);
-        right.setVisible(false);
+        topAnchor.toFront();
+        bottomAnchor.toFront();
+        leftAnchor.toFront();
+        rightAnchor.toFront();
+
+        topAnchor.setVisible(false);
+        bottomAnchor.setVisible(false);
+        leftAnchor.setVisible(false);
+        rightAnchor.setVisible(false);
 
         this.setLayoutX(x);
         this.setLayoutY(y);
 
-//        this.bubbleXProperty().bind(this.layoutXProperty());
-//        this.bubbleYProperty().bind(this.layoutYProperty());
+        topAnchor.helpCenterX.bind(this.layoutXProperty().add(coverRectangle.getWidth() / 2));
+        topAnchor.helpCenterY.bind(this.layoutYProperty());
+        rightAnchor.helpCenterX.bind(this.layoutXProperty().add(coverRectangle.getWidth()));
+        rightAnchor.helpCenterY.bind(this.layoutYProperty().add(coverRectangle.getHeight() / 2));
+        bottomAnchor.helpCenterX.bind(this.layoutXProperty().add(coverRectangle.getWidth() / 2));
+        bottomAnchor.helpCenterY.bind(this.layoutYProperty().add(coverRectangle.getHeight()));
+        leftAnchor.helpCenterX.bind(this.layoutXProperty());
+        leftAnchor.helpCenterY.bind(this.layoutYProperty().add(coverRectangle.getHeight() / 2));
 
-        top.helpCenterX.bind(this.layoutXProperty().add(Cover.getWidth() / 2));
-        top.helpCenterY.bind(this.layoutYProperty());
-        right.helpCenterX.bind(this.layoutXProperty().add(Cover.getWidth()));
-        right.helpCenterY.bind(this.layoutYProperty().add(Cover.getHeight() / 2));
-        bottom.helpCenterX.bind(this.layoutXProperty().add(Cover.getWidth() / 2));
-        bottom.helpCenterY.bind(this.layoutYProperty().add(Cover.getHeight()));
-        left.helpCenterX.bind(this.layoutXProperty());
-        left.helpCenterY.bind(this.layoutYProperty().add(Cover.getHeight() / 2));
+        this.getChildren().add(topAnchor);
+        this.getChildren().add(rightAnchor);
+        this.getChildren().add(bottomAnchor);
+        this.getChildren().add(leftAnchor);
 
-//        top.layoutXProperty().bind(this.layoutXProperty().add(Cover.getWidth() / 2));
-//        top.layoutYProperty().bind(this.layoutYProperty());
-//        right.layoutXProperty().bind(this.layoutXProperty().add(Cover.getWidth()));
-//        right.layoutYProperty().bind(this.layoutYProperty().add(Cover.getHeight() / 2));
-//        bottom.layoutXProperty().bind(this.layoutXProperty().add(Cover.getWidth() / 2));
-//        bottom.layoutYProperty().bind(this.layoutYProperty().add(Cover.getHeight()));
-//        left.layoutXProperty().bind(this.layoutXProperty());
-//        left.layoutYProperty().bind(this.layoutYProperty().add(Cover.getHeight() / 2));
-
-        this.getChildren().add(top);
-        this.getChildren().add(right);
-        this.getChildren().add(bottom);
-        this.getChildren().add(left);
-
-        anchors.add(top);
-        anchors.add(right);
-        anchors.add(bottom);
-        anchors.add(left);
+        anchorArrayList.add(topAnchor);
+        anchorArrayList.add(rightAnchor);
+        anchorArrayList.add(bottomAnchor);
+        anchorArrayList.add(leftAnchor);
 
         this.Title = new SimpleStringProperty();
         this.BubbleColor = new SimpleObjectProperty<>();
         this.BubbleFont = new SimpleObjectProperty<>();
-//        this.Font = new SimpleStringProperty();
-        this.FontSize = new SimpleStringProperty();
-        this.IsChild = new SimpleBooleanProperty(false);
+        this.isChild = new SimpleBooleanProperty();
         this.childCount = new SimpleIntegerProperty();
-//        System.out.println(this.pickOnBoundsProperty().getValue());
-        addListeners(ctrl);
+
+        addListeners(bubbleViewController);
     }
 
-    private void addListeners(final BubbleViewController ctrl) {
-        this.Title.bindBidirectional(ctrl.Title.textProperty());
-        this.BubbleColor.bindBidirectional(ctrl.cover.fillProperty()); // setValue(ctrl.cover.getFill().toString());
-        this.BubbleFont.bindBidirectional(ctrl.Title.fontProperty());
-//        this.Font.setValue(String.valueOf(ctrl.Title.getFont().getName()));
-//        this.FontSize.setValue(String.valueOf(ctrl.Title.getFont().getSize()));
-//        this.Color.bind(ctrl.cover.prop styleProperty());
+    private void addListeners(final BubbleViewController bubbleViewController) {
+        this.Title.bindBidirectional(bubbleViewController.titleLabel.textProperty());
+        this.BubbleColor.bindBidirectional(bubbleViewController.coverRectangle.fillProperty());
+        this.BubbleFont.bindBidirectional(bubbleViewController.titleLabel.fontProperty());
+
         ObjectProperty<Point2D> mousePosition = new SimpleObjectProperty<>();
 
         // Bubble selection event
-        ctrl.cover.setOnMouseClicked(t -> {
+        bubbleViewController.coverRectangle.setOnMouseClicked(t -> {
 
             // Just need it to be here
-            double titleFontSize = ctrl.Title.getFont().getSize();
+            double titleFontSize = bubbleViewController.titleLabel.getFont().getSize();
 
             if (t.getButton() == MouseButton.PRIMARY) {
                 t.consume();
                 // only one can be selected at time
-                for (int i = 0; i < bubbleArea.bubbleArrayList.size(); i++) {
-                    Bubble bubble = bubbleArea.bubbleArrayList.get(i);
+                for (int i = 0; i < bubbleArea.getBubbleArrayList().size(); i++) {
+                    Bubble bubble = bubbleArea.getBubbleArrayList().get(i);
                     // if ANOTHER bubble isSELECTED
                     if(!this.myEquals(bubble)){
                         if (bubble.isSelected)
@@ -164,43 +150,36 @@ public class Bubble extends Pane {
 
                 if (Bubble.this.isSelected) {
                     Bubble.this.isSelected = false;
-                    aThis.selectedBubble = null;
-                    aThis.colorPicker.setValue(Color.WHITE);
-                    aThis.fontCombobox.getSelectionModel().selectFirst();
-                    aThis.fontSizeCombobox.getSelectionModel().selectFirst();
+                    mainViewController.selectedBubble = null;
+                    mainViewController.colorPicker.setValue(Color.WHITE);
+                    mainViewController.fontCombobox.getSelectionModel().selectFirst();
+                    mainViewController.fontSizeCombobox.getSelectionModel().selectFirst();
                 } else {
                     Bubble.this.isSelected = true;
-                    aThis.selectedBubble = this;
-                    aThis.colorPicker.setValue(Color.web(String.valueOf(Cover.getFill())));
-                    aThis.fontCombobox.getSelectionModel().select(text.getFont().getName());
-                    aThis.fontSizeCombobox.getSelectionModel().select(String.valueOf(titleFontSize));
+                    mainViewController.selectedBubble = this;
+                    mainViewController.colorPicker.setValue(Color.web(String.valueOf(coverRectangle.getFill())));
+                    mainViewController.fontCombobox.getSelectionModel().select(titleLabel.getFont().getName());
+                    mainViewController.fontSizeCombobox.getSelectionModel().select(String.valueOf(titleFontSize));
                 }
-                ctrl.toggleSelected(Bubble.this.isSelected);
+                bubbleViewController.toggleSelected(Bubble.this.isSelected);
 
 
             }
         });
 
-        ctrl.cover.setOnMouseEntered(event -> {
+        bubbleViewController.coverRectangle.setOnMouseEntered(event -> {
             Bubble.this.setCursor(Cursor.HAND);
         });
 
-        ctrl.cover.setOnMouseExited(event -> {
+        bubbleViewController.coverRectangle.setOnMouseExited(event -> {
             Bubble.this.setCursor(Cursor.DEFAULT);
         });
         // Dragging bubble events
-        ctrl.cover.setOnMousePressed(e -> {
+        bubbleViewController.coverRectangle.setOnMousePressed(e -> {
             mousePosition.set(new Point2D(e.getSceneX(), e.getSceneY()));
-//            System.out.println("Mouse clicked point :" +  this.getLayoutX() + " " +this.getLayoutY());
-//            System.out.println("ctrl.top.getCenterX() Y : " + ctrl.top.getCenterX() + " " + ctrl.top.getCenterY());
-//            System.out.println("this.top.getCenterX() Y : " + this.top.getCenterX() + " " + this.top.getCenterY());
-//            System.out.println("ctrl.top.getLayoutX() Y : " + ctrl.top.getLayoutX() + " " + ctrl.top.getLayoutY());
-//            System.out.println("this.top.getLayoutX() Y : " + this.top.getLayoutX() + " " + this.top.getLayoutY());
         });
-        ctrl.cover.setOnMouseDragged(t -> {
+        bubbleViewController.coverRectangle.setOnMouseDragged(t -> {
             Bubble.this.setCursor(Cursor.MOVE);
-
-//            System.out.println("this.top.getCenterX() Y : " + this.top.getLayoutX() + " " + this.top.getLayoutY());
 
             double deltaX = t.getSceneX() - mousePosition.get().getX();
             double deltaY = t.getSceneY() - mousePosition.get().getY();
@@ -209,12 +188,12 @@ public class Bubble extends Pane {
             Bubble.this.setLayoutY(Bubble.this.getLayoutY() + deltaY);
             mousePosition.set(new Point2D(t.getSceneX(), t.getSceneY()));
         });
-        ctrl.cover.setOnMouseReleased(t -> {
+        bubbleViewController.coverRectangle.setOnMouseReleased(t -> {
             Bubble.this.setCursor(Cursor.DEFAULT);
         });
 
         // Change bubble title event
-        ctrl.Title.setOnMouseClicked(mouseEvent -> {
+        bubbleViewController.titleLabel.setOnMouseClicked(mouseEvent -> {
             if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
                 if(mouseEvent.getClickCount() == 2){
                     TextInputDialog dialog = new TextInputDialog();
@@ -225,12 +204,12 @@ public class Bubble extends Pane {
                         if (result.get().length() < 45) {
                             if (result.get().length() > 15) {
                                 if (result.get().length() >= 30) {
-                                    ctrl.Title.setText(result.get().substring(0, 15) + "\n" + result.get().substring(15, 30) + "\n" + result.get().substring(30));
+                                    bubbleViewController.titleLabel.setText(result.get().substring(0, 15) + "\n" + result.get().substring(15, 30) + "\n" + result.get().substring(30));
                                 } else {
-                                    ctrl.Title.setText(result.get().substring(0, 15) + "\n" + result.get().substring(15));
+                                    bubbleViewController.titleLabel.setText(result.get().substring(0, 15) + "\n" + result.get().substring(15));
                                 }
                             } else if (result.get().length() < 15) {
-                                ctrl.Title.setText(result.get());
+                                bubbleViewController.titleLabel.setText(result.get());
                             }
                         }
                     }
@@ -240,22 +219,15 @@ public class Bubble extends Pane {
 
     }
 
-    public void changeVisible() {
-        bottom.setVisible(!bottom.isVisible());
-        top.setVisible(!top.isVisible());
-        left.setVisible(!left.isVisible());
-        right.setVisible(!right.isVisible());
-    }
-
     public void setAnchorsVisible(boolean isVisible){
-        bottom.setVisible(isVisible);
-        top.setVisible(isVisible);
-        left.setVisible(isVisible);
-        right.setVisible(isVisible);
+        bottomAnchor.setVisible(isVisible);
+        topAnchor.setVisible(isVisible);
+        leftAnchor.setVisible(isVisible);
+        rightAnchor.setVisible(isVisible);
     }
 
-    public ArrayList<Anchor> getAnchors() {
-        return anchors;
+    public ArrayList<Anchor> getAnchorArrayList() {
+        return anchorArrayList;
     }
 
     public boolean myEquals(Object obj) {
